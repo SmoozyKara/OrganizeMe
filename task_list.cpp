@@ -1,5 +1,6 @@
 #include "task_list.h"
 
+#include <iostream>
 #include <queue>
 
 int GenerateNextListId() {
@@ -38,6 +39,35 @@ struct CandidateComparator {
 };
 
 }  // namespace
+
+void CreateTaskList(Organizer& organizer, std::string name, std::string color) {
+  TaskList list;
+  list.id = GenerateNextListId();
+  list.color = color;
+  list.name = name;
+  if (organizer.lists.empty())
+    list.rank = 0;
+  else
+    list.rank = organizer.lists[organizer.lists.size() - 1].rank + 1;
+  organizer.lists.push_back(list);
+}
+
+void DeleteTaskList(Organizer& organizer, int id) {
+  auto it = std::find_if(organizer.lists.begin(), organizer.lists.end(),
+                         [id](const TaskList& List) { return List.id == id; });
+  if (it != organizer.lists.end()) {
+    int deleted_rank = it->rank;
+    organizer.lists.erase(it);
+
+    for (auto& list : organizer.lists) {
+      if (list.rank < deleted_rank) {
+        list.rank--;
+      }
+    }
+
+  } else
+    std::cerr << "DeleteTaskList: id " << id << " not found\n";
+}
 
 std::vector<TaskItem> MergeAllLists(const std::vector<TaskList>& lists) {
   std::vector<TaskItem> result;

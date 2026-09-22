@@ -31,6 +31,10 @@ int GenerateNextListId();
 
 // TODO: CreateTaskList, DeleteTaskList - ещё не реализованы.
 
+void CreateTaskList(Organizer& organizer, std::string name, std::string color);
+
+void DeleteTaskList(Organizer& organizer, int id);
+
 // Сливает все переданные списки в один, отсортированный по priority
 // элементов, с тай-брейком по rank списка при равном priority.
 std::vector<TaskItem> MergeAllLists(const std::vector<TaskList>& lists);
