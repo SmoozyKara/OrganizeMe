@@ -18,6 +18,7 @@ public:
         ItemIdRole = Qt::UserRole + 1,
         PriorityRole,
         TextRole,
+        ListColorRole,
     };
 
     explicit TaskListModel(Organizer& organizer, int listId,

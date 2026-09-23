@@ -1,5 +1,8 @@
 #include "organizermodel.h"
 
+#include <QColor>
+#include <QRandomGenerator>
+
 OrganizerModel::OrganizerModel(Organizer& organizer, QObject* parent)
     : QAbstractListModel(parent), organizer_(organizer) {}
 
@@ -40,14 +43,26 @@ QHash<int, QByteArray> OrganizerModel::roleNames() const {
             };
 }
 
-void OrganizerModel::createList(const QString& name, const QString& color) {
+void OrganizerModel::createList(const QString& name) {
+    // Случайный приятный цвет: фиксированные насыщенность/яркость (HSL),
+    // случайный только тон (hue) - так цвета получаются разнообразными,
+    // но не "грязными" и не слишком тёмными/светлыми.
+    int hue = QRandomGenerator::global()->bounded(360);
+    QColor color = QColor::fromHsl(hue, 180, 130);
+
     beginResetModel();
-    CreateTaskList(organizer_, name.toStdString(), color.toStdString());
+    CreateTaskList(organizer_, name.toStdString(), color.name().toStdString());
     endResetModel();
 }
 
 void OrganizerModel::deleteList(int listId) {
     beginResetModel();
     DeleteTaskList(organizer_, listId);
+    endResetModel();
+}
+
+void OrganizerModel::changeColor(int listId, const QString& color) {
+    beginResetModel();
+    ChangeListColor(organizer_, listId, color.toStdString());
     endResetModel();
 }

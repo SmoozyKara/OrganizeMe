@@ -35,6 +35,8 @@ QVariant TaskListModel::data(const QModelIndex& index, int role) const {
         return item.priority;
     case TextRole:
         return QString::fromStdString(item.text);
+    case ListColorRole:
+        return QString::fromStdString(list->color);
     default:
         return QVariant();
     }
@@ -45,6 +47,7 @@ QHash<int, QByteArray> TaskListModel::roleNames() const {
             {ItemIdRole, "itemId"},
             {PriorityRole, "priority"},
             {TextRole, "text"},
+            {ListColorRole, "listColor"},
             };
 }
 

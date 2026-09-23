@@ -19,6 +19,7 @@ public:
         ItemIdRole = Qt::UserRole + 1,
         PriorityRole,
         TextRole,
+        ListColorRole,
     };
 
     explicit SummaryModel(Organizer& organizer, QObject* parent = nullptr);
@@ -33,6 +34,13 @@ public:
     Q_INVOKABLE void refresh();
 
 private:
+    void RebuildCache();
+
     Organizer& organizer_;
     std::vector<TaskItem> cached_items_;
+    // cached_colors_[i] - цвет списка, из которого пришёл cached_items_[i].
+    // Параллельный массив (тот же размер и порядок, что cached_items_) -
+    // проще, чем заводить отдельную структуру-пару, раз оба массива
+    // всегда пересобираются и используются вместе.
+    std::vector<std::string> cached_colors_;
 };

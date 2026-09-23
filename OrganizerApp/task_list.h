@@ -44,6 +44,10 @@ void CreateTaskList(Organizer& organizer, std::string name,
 // не найден - ничего не делает, сообщает об этом в консоль.
 void DeleteTaskList(Organizer& organizer, int id);
 
+// Меняет цвет уже существующего списка. Если список с таким id не
+// найден - ничего не делает, сообщает об этом в консоль.
+void ChangeListColor(Organizer& organizer, int id, std::string color);
+
 // Сливает все переданные списки в один, отсортированный по priority
 // элементов, с тай-брейком по rank списка при равном priority.
 std::vector<TaskItem> MergeAllLists(const std::vector<TaskList>& lists);

@@ -49,6 +49,19 @@ void DeleteTaskList(Organizer& organizer, int id) {
     }
 }
 
+void ChangeListColor(Organizer& organizer, int id, std::string color) {
+    auto it = std::find_if(
+        organizer.lists.begin(), organizer.lists.end(),
+        [id](const TaskList& list) { return list.id == id; });
+
+    if (it == organizer.lists.end()) {
+        std::cerr << "ChangeListColor: id " << id << " not found\n";
+        return;
+    }
+
+    it->color = std::move(color);
+}
+
 // Всё внутри namespace { ... } видно только в этом файле (task_list.cpp)
 // и нигде больше - это способ "спрятать" детали реализации, которые не
 // нужны никому снаружи. MergeCandidate и CandidateComparator нужны

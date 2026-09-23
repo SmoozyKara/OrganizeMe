@@ -24,8 +24,9 @@ public:
     QVariant data(const QModelIndex& index, int role) const override;
     QHash<int, QByteArray> roleNames() const override;
 
-    Q_INVOKABLE void createList(const QString& name, const QString& color);
+    Q_INVOKABLE void createList(const QString& name);
     Q_INVOKABLE void deleteList(int listId);
+    Q_INVOKABLE void changeColor(int listId, const QString& color);
 
 private:
     Organizer& organizer_;
