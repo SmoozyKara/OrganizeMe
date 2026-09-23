@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QObject>
+#include <QString>
 #include <map>
 
 #include "task_list.h"
@@ -26,9 +27,17 @@ public:
     // для одного и того же списка).
     Q_INVOKABLE QObject* getTaskListModel(int listId);
 
+public slots:
+    // Сохраняет текущее состояние organizer_ в файл. Вызывается при
+    // закрытии приложения (см. main.cpp) - для MVP этого достаточно;
+    // сохранение после каждого изменения (на случай краша) можно
+    // добавить позже.
+    void save();
+
 private:
     Organizer organizer_;
     OrganizerModel* organizer_model_;
+    QString storage_file_path_;
 
     // Кэш уже созданных моделей отдельных списков: list id -> модель.
     std::map<int, TaskListModel*> task_list_models_;

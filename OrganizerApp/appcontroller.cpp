@@ -1,15 +1,37 @@
 #include "appcontroller.h"
 
-AppController::AppController(QObject* parent) : QObject(parent) {
-    // Тестовые данные - временно, пока нет загрузки из файла.
-    CreateTaskList(organizer_, "Работа", "#FF5733");
-    AddElementToList(organizer_.lists.back().items, {0, 1, "Утренний дейлик"});
-    AddElementToList(organizer_.lists.back().items, {0, 2, "Обед с коллегой"});
+#include <QDir>
+#include <QStandardPaths>
 
-    CreateTaskList(organizer_, "Домашние дела", "#33A1FF");
-    AddElementToList(organizer_.lists.back().items, {0, 1, "Генеральная уборка"});
+#include "storage.h"
+
+AppController::AppController(QObject* parent) : QObject(parent) {
+    // Папка, куда Qt рекомендует класть данные приложения - разная на
+    // каждой платформе (на Mac это что-то вроде
+    // ~/Library/Application Support/<имя приложения>), но нам не нужно
+    // знать точный путь - Qt сам его определяет.
+    QString dir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    QDir().mkpath(dir);  // создаёт папку, если её ещё нет
+    storage_file_path_ = dir + "/organizer.json";
+
+    bool loaded = LoadOrganizerFromFile(organizer_, storage_file_path_);
+
+    if (!loaded) {
+        // Файла ещё нет (первый запуск) или он повреждён - создаём
+        // тестовые данные, чтобы экран не был пустым.
+        CreateTaskList(organizer_, "Работа", "#FF5733");
+        AddElementToList(organizer_.lists.back().items, {0, 1, "Утренний дейлик"});
+        AddElementToList(organizer_.lists.back().items, {0, 2, "Обед с коллегой"});
+
+        CreateTaskList(organizer_, "Домашние дела", "#33A1FF");
+        AddElementToList(organizer_.lists.back().items, {0, 1, "Генеральная уборка"});
+    }
 
     organizer_model_ = new OrganizerModel(organizer_, this);
+}
+
+void AppController::save() {
+    SaveOrganizerToFile(organizer_, storage_file_path_);
 }
 
 QObject* AppController::organizerModel() const {

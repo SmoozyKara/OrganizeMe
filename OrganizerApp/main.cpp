@@ -12,6 +12,7 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     AppController controller;
+    QObject::connect(&app, &QGuiApplication::aboutToQuit, &controller, &AppController::save);
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("appController", &controller);
