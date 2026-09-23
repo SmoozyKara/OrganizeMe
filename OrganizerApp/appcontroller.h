@@ -7,6 +7,7 @@
 #include "task_list.h"
 #include "tasklistmodel.h"
 #include "organizermodel.h"
+#include "summarymodel.h"
 
 // Единая точка, которую main.cpp создаёт и передаёт в QML.
 // Владеет всеми данными приложения (Organizer) и всеми QML-моделями
@@ -15,11 +16,13 @@ class AppController : public QObject {
     Q_OBJECT
 
     Q_PROPERTY(QObject* organizerModel READ organizerModel CONSTANT)
+    Q_PROPERTY(QObject* summaryModel READ summaryModel CONSTANT)
 
 public:
     explicit AppController(QObject* parent = nullptr);
 
     QObject* organizerModel() const;
+    QObject* summaryModel() const;
 
     // Возвращает модель конкретного списка по его id. Если модель для
     // этого id уже создавалась раньше - переиспользует её, а не
@@ -37,6 +40,7 @@ public slots:
 private:
     Organizer organizer_;
     OrganizerModel* organizer_model_;
+    SummaryModel* summary_model_;
     QString storage_file_path_;
 
     // Кэш уже созданных моделей отдельных списков: list id -> модель.

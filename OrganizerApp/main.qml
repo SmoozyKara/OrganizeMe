@@ -9,6 +9,9 @@ Window {
     visible: true
     title: "Органайзер приоритетов"
 
+    // "lists" - список списков, "tasks" - задачи одного списка,
+    // "summary" - сводный список всех задач сразу.
+    property string currentScreen: "lists"
     property int currentListId: -1
     property string currentListName: ""
 
@@ -17,9 +20,19 @@ Window {
         anchors.fill: parent
         anchors.margins: 12
         spacing: 8
-        visible: currentListId === -1
+        visible: currentScreen === "lists"
 
-        // Форма создания нового списка
+        Row {
+            spacing: 8
+            Button {
+                text: "Все задачи"
+                onClicked: {
+                    appController.summaryModel.refresh()
+                    currentScreen = "summary"
+                }
+            }
+        }
+
         Row {
             spacing: 8
             TextField {
@@ -45,7 +58,7 @@ Window {
 
         ListView {
             width: parent.width
-            height: parent.height - 50
+            height: parent.height - 100
             spacing: 8
 
             model: appController.organizerModel
@@ -65,9 +78,6 @@ Window {
                     font.pixelSize: 18
                 }
 
-                // Кнопка удаления списка - справа, поверх карточки.
-                // Отдельная MouseArea внутри неё "перехватывает" клик,
-                // чтобы не срабатывал переход в список (см. ниже).
                 Button {
                     anchors.right: parent.right
                     anchors.rightMargin: 8
@@ -78,12 +88,11 @@ Window {
 
                 MouseArea {
                     anchors.fill: parent
-                    // Оставляем место под кнопку справа свободным от
-                    // перехвата клика, чтобы кнопка "Удалить" работала.
                     anchors.rightMargin: 80
                     onClicked: {
                         currentListId = model.listId
                         currentListName = model.name
+                        currentScreen = "tasks"
                     }
                 }
             }
@@ -95,13 +104,13 @@ Window {
         anchors.fill: parent
         anchors.margins: 12
         spacing: 8
-        visible: currentListId !== -1
+        visible: currentScreen === "tasks"
 
         Row {
             spacing: 12
             Button {
                 text: "< Назад"
-                onClicked: currentListId = -1
+                onClicked: currentScreen = "lists"
             }
             Text {
                 text: currentListName
@@ -110,7 +119,6 @@ Window {
             }
         }
 
-        // Форма добавления задачи
         Row {
             spacing: 8
             TextField {
@@ -140,7 +148,7 @@ Window {
             height: parent.height - 100
             spacing: 8
 
-            model: currentListId !== -1
+            model: currentScreen === "tasks"
                    ? appController.getTaskListModel(currentListId)
                    : null
 
@@ -172,6 +180,60 @@ Window {
                     anchors.verticalCenter: parent.verticalCenter
                     text: "Удалить"
                     onClicked: appController.getTaskListModel(currentListId).removeItem(model.itemId)
+                }
+            }
+        }
+    }
+
+    // Экран 3: сводный список всех задач
+    Column {
+        anchors.fill: parent
+        anchors.margins: 12
+        spacing: 8
+        visible: currentScreen === "summary"
+
+        Row {
+            spacing: 12
+            Button {
+                text: "< Назад"
+                onClicked: currentScreen = "lists"
+            }
+            Text {
+                text: "Все задачи"
+                font.pixelSize: 20
+                anchors.verticalCenter: parent.verticalCenter
+            }
+        }
+
+        ListView {
+            width: parent.width
+            height: parent.height - 60
+            spacing: 8
+
+            // Модель уже "смотрит" в кэш, посчитанный при нажатии
+            // кнопки "Все задачи" - здесь только отображение.
+            model: appController.summaryModel
+
+            delegate: Rectangle {
+                width: ListView.view.width
+                height: 60
+                color: "#f0f0f0"
+                radius: 8
+
+                Column {
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.leftMargin: 12
+
+                    Text {
+                        text: model.text
+                        font.pixelSize: 16
+                    }
+                    Text {
+                        text: "Приоритет: " + model.priority
+                        font.pixelSize: 12
+                        color: "#666"
+                    }
                 }
             }
         }

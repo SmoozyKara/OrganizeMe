@@ -28,6 +28,11 @@ AppController::AppController(QObject* parent) : QObject(parent) {
     }
 
     organizer_model_ = new OrganizerModel(organizer_, this);
+    summary_model_ = new SummaryModel(organizer_, this);
+}
+
+QObject* AppController::summaryModel() const {
+    return summary_model_;
 }
 
 void AppController::save() {
