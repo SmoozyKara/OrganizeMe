@@ -73,3 +73,14 @@ void TaskListModel::removeItem(int itemId) {
     DeleteElementFromList(list->items, itemId);
     endResetModel();
 }
+
+void TaskListModel::changePriority(int itemId, int newPriority) {
+    TaskList* list = findList();
+    if (!list) {
+        return;
+    }
+
+    beginResetModel();
+    ChangeElementPriority(list->items, itemId, newPriority);
+    endResetModel();
+}

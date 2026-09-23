@@ -167,10 +167,26 @@ Window {
                         text: model.text
                         font.pixelSize: 16
                     }
-                    Text {
-                        text: "Приоритет: " + model.priority
-                        font.pixelSize: 12
-                        color: "#666"
+                    Row {
+                        spacing: 6
+                        Text {
+                            text: "Приоритет:"
+                            font.pixelSize: 12
+                            color: "#666"
+                            anchors.verticalCenter: parent.verticalCenter
+                        }
+                        SpinBox {
+                            from: 1
+                            to: 10
+                            value: model.priority
+                            // onValueModified срабатывает только когда
+                            // значение меняет пользователь (кнопками или
+                            // вводом), а не при программной перерисовке -
+                            // иначе была бы петля: смена приоритета ->
+                            // beginResetModel -> перерисовка -> снова
+                            // "как будто" изменили значение.
+                            onValueModified: appController.getTaskListModel(currentListId).changePriority(model.itemId, value)
+                        }
                     }
                 }
 

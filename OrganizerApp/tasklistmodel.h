@@ -30,12 +30,14 @@ public:
     // Методы, вызываемые из QML (например, по нажатию кнопки).
     Q_INVOKABLE void addItem(int priority, const QString& text);
     Q_INVOKABLE void removeItem(int itemId);
+    Q_INVOKABLE void changePriority(int itemId, int newPriority);
 
 private:
     // Находит актуальный TaskList в organizer_ по list_id_.
     // Возвращает nullptr, если список уже удалён (на этот случай тоже
     // нужно быть готовым реагировать - см. .cpp).
     TaskList* findList() const;
+
     Organizer& organizer_;
     int list_id_;
 };
