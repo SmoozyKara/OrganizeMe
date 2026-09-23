@@ -1,5 +1,8 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
+
+#include "appcontroller.h"
 
 int main(int argc, char *argv[])
 {
@@ -8,7 +11,11 @@ int main(int argc, char *argv[])
 #endif
     QGuiApplication app(argc, argv);
 
+    AppController controller;
+
     QQmlApplicationEngine engine;
+    engine.rootContext()->setContextProperty("appController", &controller);
+
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(
         &engine,
